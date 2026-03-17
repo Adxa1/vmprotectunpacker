@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Project includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# Capstone include
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/capstone/lib)
+
 # Find source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "include/**/*.h")
@@ -20,14 +24,5 @@ endif()
 # Add executable
 add_executable(VMProtectUnpacker ${SOURCES} ${HEADERS})
 
-# Include directories
-target_include_directories(VMProtectUnpacker PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-# Find and link Capstone (from vcpkg or system)
-find_package(capstone CONFIG REQUIRED)
-
-target_link_libraries(VMProtectUnpacker
-    capstone
-)
+# Link Capstone
+target_link_libraries(VMProtectUnpacker capstone)
