@@ -2,10 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(VMProtectUnpacker LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-
-# Capstone paths (optional)
-include_directories("C:/Program Files/capstone/include")
-link_directories("C:/Program Files/capstone/lib")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Project includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -23,5 +20,14 @@ endif()
 # Add executable
 add_executable(VMProtectUnpacker ${SOURCES} ${HEADERS})
 
-# Link Capstone
-target_link_libraries(VMProtectUnpacker capstone)
+# Include directories
+target_include_directories(VMProtectUnpacker PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Find and link Capstone (from vcpkg or system)
+find_package(capstone CONFIG REQUIRED)
+
+target_link_libraries(VMProtectUnpacker
+    capstone
+)
