@@ -3,24 +3,28 @@ name: Build
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Download Capstone
+      - name: Install dependencies
         run: |
-          curl -L https://github.com/capstone-engine/capstone/releases/download/5.0.1/capstone-5.0.1-win64.zip -o capstone.zip
-          tar -xf capstone.zip
-          ren capstone-5.0.1-win64 capstone
+          sudo apt update
+          sudo apt install -y cmake build-essential libcapstone-dev
 
       - name: Configure
         run: cmake -B build -S .
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VMProtectUnpacker
+          path: build/
