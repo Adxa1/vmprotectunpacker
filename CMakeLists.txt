@@ -4,7 +4,7 @@ project(VMProtectUnpacker LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Collect source files
+# Find source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 if(NOT SOURCES)
@@ -13,12 +13,10 @@ endif()
 
 add_executable(VMProtectUnpacker ${SOURCES})
 
-# Important: include project root so includes like
-# #include "vmprotectunpacker/PEParser.h" work
+# IMPORTANT: add include folder
 target_include_directories(VMProtectUnpacker PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Link capstone
+# Link Capstone
 target_link_libraries(VMProtectUnpacker capstone)
