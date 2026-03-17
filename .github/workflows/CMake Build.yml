@@ -1,0 +1,37 @@
+name: CMake Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Capstone
+        run: |
+          git clone https://github.com/capstone-engine/capstone.git
+          cd capstone
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
+          cmake --install . --prefix "C:/Program Files/capstone"
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCAPSTONE_INCLUDE_DIR="C:/Program Files/capstone/include" `
+            -DCAPSTONE_LIBRARY="C:/Program Files/capstone/lib/capstone.lib"
+
+      - name: Build
+        run: |
+          cmake --build build --config Release
