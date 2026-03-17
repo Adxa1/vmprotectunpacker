@@ -3,8 +3,6 @@ name: Build VMProtectUnpacker
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -12,19 +10,30 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Configure with CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+
+      - name: Install Capstone
+        run: |
+          cd vcpkg
+          .\vcpkg install capstone:x64-windows
+
+      - name: Configure
+        run: cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         run: cmake --build build --config Release
 
-      - name: Upload build
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: VMProtectUnpacker
